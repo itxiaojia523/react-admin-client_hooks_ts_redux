@@ -1,0 +1,54 @@
+.header{
+    height: 80px;
+    background-color: #fff;
+    .header-top{
+        height: 40px;
+        text-align: right;
+        line-height: 40px; //行高等于高 居中
+        padding-right: 30px;
+        border-bottom: 1px solid #1da57a;
+        span{
+            margin-right: 10px;
+        }
+    }
+
+    .header-bottom{
+        height: 40px;
+        display: flex;
+        align-items: center;
+        .header-bottom-left{
+            position: relative;
+            flex: 1;
+            // width: 25%;
+            font-size: 20px;
+            text-align: center;
+            &::after{
+                content: '';
+                position: absolute;
+                //相对开启定位的父元素的50%
+                right:50%;
+                top: 100%;
+                // 在移动自身50%
+                transform: translateX(50%);
+                border-top: 20px solid #fff;
+                border-right: 20px solid transparent;
+                border-bottom: 20px solid transparent;
+                border-left: 20px solid transparent;
+            }    
+        }
+        .header-bottom-right{
+            flex: 3;
+            // width: 75%;
+            text-align: right;
+            margin-right: 30px;
+            img{
+                margin: 0 15px
+                // width: 30px
+                // height: 20px
+            }
+        }
+        
+
+    }
+
+}
