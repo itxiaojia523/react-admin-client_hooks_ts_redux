@@ -1,6 +1,6 @@
 import React, { FC, ReactElement, useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
-import memoryUtils from '../../utils/memoryUtils';
+import {connect} from 'react-redux'
 import { Layout } from 'antd';
 import LeftNav from '../../components/left-nav';
 import Header from '../../components/header';
@@ -13,18 +13,16 @@ import Bar from '../charts/bar';
 import Line from '../charts/line';
 import Pie from '../charts/pie';
 import Order from '../order';
+import { IStoreState } from '../../typings';
+import NotFound from '../not-found'
 
 const {Footer, Sider, Content } = Layout;
 
 // 一级路由 登录的路由组件
-const Admin:FC = ():ReactElement => {
+const Admin:FC = (props:any):ReactElement => {
     let navigate = useNavigate()
     //从内存中取user数据 可能为空 表未登录
-    interface IUser{
-        username? : string
-        _id? : string
-    }
-    const user:IUser = memoryUtils.user
+    const user = props?.user
     //如果没登录
     //在render中
     useEffect(() => {
@@ -34,7 +32,7 @@ const Admin:FC = ():ReactElement => {
             //自动跳转到登录界面
             navigate('/login')
         }
-    },[])
+    },[props?.user])
     
     
     return (
@@ -48,6 +46,7 @@ const Admin:FC = ():ReactElement => {
                     <Header/>
                     <Content style={{margin: 20, backgroundColor:'#fff'}}>
                         <Routes>
+                            <Route index element={<Home/>}></Route>
                             <Route path='home' element={<Home/>}></Route>
                             <Route path='category' element={<Category/>}></Route>  
                             <Route path='product/*' element={<Product/>}></Route>  
@@ -57,7 +56,7 @@ const Admin:FC = ():ReactElement => {
                             <Route path='charts/line' element={<Line/>}></Route>  
                             <Route path='charts/pie' element={<Pie/>}></Route>  
                             <Route path='order' element={<Order/>}></Route>  
-                            <Route path="/*" element={<Home />} />            
+                            <Route path="/*" element={<NotFound />} />            
                         </Routes>
                     </Content>
                     <Footer style={{textAlign:'center',color:'#ccc'}}>推荐使用谷歌浏览器，可以获取更佳页面操作体验</Footer>
@@ -68,5 +67,9 @@ const Admin:FC = ():ReactElement => {
         
     )
 }
-
-export default Admin
+const mapStateToProps = (state: IStoreState) => {
+    return {
+        user: state.user
+    }
+};
+export default connect(mapStateToProps)(Admin)

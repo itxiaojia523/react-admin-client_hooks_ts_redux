@@ -82,3 +82,8 @@ export interface Iuser{
   role_id:string
   create_time?:number
 }
+
+export interface IStoreState {
+  user: Iuser
+  headTitle: string
+}

@@ -1,4 +1,6 @@
 import React, { FC, ReactElement, ReactNode } from 'react'
+import { Dispatch } from 'redux'
+import {connect} from 'react-redux'
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../../assets/images/logo.png'
 import { Menu } from 'antd';
@@ -6,7 +8,8 @@ import { PieChartOutlined, MailOutlined } from '@ant-design/icons';
 
 import menuList from '../../config/menuConfig';
 import './index.less'
-import memoryUtils from '../../utils/memoryUtils';
+import { HeadTitle, setHeadTitle } from '../../redux/action';
+import { IStoreState } from '../../typings'
 const { SubMenu } = Menu;
 
 // 头部组件
@@ -18,7 +21,7 @@ interface IItem {
     children?: []
   }
 
-const LeftNav:FC = ():ReactElement=>{
+const LeftNav:FC = (props:any):ReactElement=>{
 
     //得到当前的路径,用于设置自动选中当前菜单项
     const location = useLocation();
@@ -35,8 +38,8 @@ const LeftNav:FC = ():ReactElement=>{
         // 判断当前用户对item是否有权限
         const hasAuth = (item:any)=>{
             const {key, isPublic} = item
-            const menus = memoryUtils.user.role.menus
-            const username = memoryUtils.user.username
+            const menus = props?.user.role.menus
+            const username = props?.user.username
             // 如果是admin 直接通过
             // 判断权限 key是否在menus中
             // 如果当前item是公开的，也返回true
@@ -56,10 +59,17 @@ const LeftNav:FC = ():ReactElement=>{
         return menuList.map((item:IItem)=>{      
             // 如果当前用户有对应的权限，才需要显示 
             if(hasAuth(item)){
+                
                 if(!item.children){
+                    // 在有子项的地方刷新 会是初始值 首页 以及添加商品时路径不会全等
+                    // 判断item是否为当前对应的item
+                    if(item.key === path || path.indexOf(item.key) === 0){
+                        // 当前要显示title为item.title 而不是citem
+                        props.setHeadTitle(item.title)
+                    }
                     return  (
                         <Menu.Item key={item.key} icon={<PieChartOutlined />}>
-                            <Link to={item.key}>
+                            <Link to={item.key} onClick={()=>{props.setHeadTitle(item.title)}}>
                                 <span>{item.title}</span>
                             </Link>
                         </Menu.Item>
@@ -142,4 +152,28 @@ const LeftNav:FC = ():ReactElement=>{
         </div>
     )
 }
-export default LeftNav
+const mapStateToProps = (state: IStoreState) => {
+    return {
+        user: state.user
+    }
+};
+  interface IDispatcherProps {
+    setHeadTitle: (title:string) => HeadTitle;
+  }
+// 将 对应action 插入到组件的 props 中
+const mapDispatcherToProps = (dispatch:Dispatch): IDispatcherProps => {
+    return {
+        setHeadTitle: (title:string) => dispatch(setHeadTitle(title))
+    }
+};
+export default connect(
+    mapStateToProps,
+    mapDispatcherToProps
+)(LeftNav)
+
+// 将 对应action 插入到组件的 props 中
+// const mapDispatcherToProps = (dispatch: Dispatch, ownProps: IStateProps): IDispatcherProps => ({
+//     deleteTodo: () => dispatch(actions.deleteTodo(ownProps.id)),
+//     toggleTodo: () => dispatch(actions.toggleTodo(ownProps.id)),
+//     editTodo: (text: string) => dispatch(actions.editTodo(ownProps.id, text))
+// });

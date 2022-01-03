@@ -126,9 +126,9 @@ const ProductAddUpdate:FC = ():ReactElement=> {
         
         
     }
-            const onChange = (value:any, selectedOptions:any) => {
-          console.log(value, selectedOptions);
-        };
+        //     const onChange = (value:any, selectedOptions:any) => {
+        //   console.log(value, selectedOptions);
+        // };
       
         // 加载下一级列表的回调
         const loadData = async(selectedOptions:any) => {
