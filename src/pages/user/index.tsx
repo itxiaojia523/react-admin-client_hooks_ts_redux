@@ -141,7 +141,7 @@ const User:FC = ():ReactElement=>{
         // 表示是修改界面
         setIsUpdate(true)
         setUser(user)
-        staForm.setFieldsValue({
+        staForm?.setFieldsValue({
             username:user.username,
             password:user.password,
             phone: user.phone,
